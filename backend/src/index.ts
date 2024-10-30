@@ -5,7 +5,8 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 
 const app = new Hono<{
 	Bindings: {         // in hono u have to pass this thing to specify the type of database url
-		DATABASE_URL: string
+		DATABASE_URL: string,
+    JWT_SECRET:string
 	}
 }>();
 
@@ -18,24 +19,46 @@ app.post('/api/v1/user/signup', async(c)=>{
 }).$extends(withAccelerate()) 
 
 const body = await c.req.json();
-const secret = 'mylittlesecret'
-  const user = await prisma.user.create({
-    data:{
-      email: body.email,
-      name: body.name,
-      password: body.password
-    }
-  })
-    const token = await sign({id : user.id},secret);
-    return c.json({"messsage":"signup successfull",token});
+  try {
+		const user = await prisma.user.create({
+			data: {
+				email: body.email,
+				password: body.password
+			}
+		});
+		const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+		return c.json({ jwt ,'message':"signup successfull"});
+	} catch(e) {
+		c.status(403);
+		return c.json({ error: "error while signing up" });
+	}
 })
 
 app.get("/",(c)=>{
    return c.text("server is running ")
 })
 
-app.post('/api/v1/user/signin', (c)=>{
-  return c.text("POST signin")
+app.post('/api/v1/user/signin', async(c)=>{
+  const prisma = new PrismaClient({     
+    datasourceUrl: c.env.DATABASE_URL, 
+}).$extends(withAccelerate()) 
+
+const body = await c.req.json();
+
+ const user = await prisma.user.findUnique({
+  where:{
+    email:body.email
+  }
+ });
+  if(!user){
+  return c.json({error:"wrong email"})
+  }else if(user.password===body.password){
+    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+	  return c.json({ jwt,message:"signin successfull" });
+  }else{
+    return c.json({error:"wrong Password"})
+  }
+
 })
 
 app.post('/api/v1/blog', (c)=>{
