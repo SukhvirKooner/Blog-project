@@ -1,14 +1,26 @@
 import { Hono } from 'hono'
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 
 const app = new Hono<{
 	Bindings: {         // in hono u have to pass this thing to specify the type of database url
 		DATABASE_URL: string,
-    JWT_SECRET:string
+    JWT_SECRET:string,
 	}
 }>();
+
+app.use('/api/v1/blog/*', async (c, next) => {
+  const header = c.req.header('Authorization') || "";
+  const response = await verify(header,c.env.JWT_SECRET);
+  if (response.id){
+    await next();
+  }else{
+    c.status(403);
+    c.json({"error":"unauthorized"})
+  }
+  
+})
 
 // in serverless backend , we should avoid global variables bcz 
 // depending on the runtime , they just start the specific function
