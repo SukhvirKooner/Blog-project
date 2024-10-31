@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/edge.js";
+import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
@@ -14,12 +14,11 @@ export const blogRouter = new Hono<{
 	}
 }>();
 
-blogRouter.use('/*', async (c, next) => {
-    
+blogRouter.use('/*', async (c, next) => {    
     const authHeader = c.req.header('Authorization') || '';
     const user = await verify(authHeader,c.env.JWT_SECRET);
         if(user){
-            c.set('userId',user.id as string);
+            c.set('userId',user.id as string);            
             await next();
         }else{
             c.status(403);
@@ -95,13 +94,12 @@ blogRouter.get('/:id', async(c) => {
 
 // add pagination
 
-blogRouter.get('/bulk', async(c)=>{
-    const prisma = new PrismaClient({     
+blogRouter.get('/', async (c) => {    
+	const prisma = new PrismaClient({     
         datasourceUrl: c.env.DATABASE_URL, 
-    }).$extends(withAccelerate()) 
-    const blog = await prisma.post.findMany();
+    }).$extends(withAccelerate())
+	
+	const posts = await prisma.post.findMany();
 
-    return c.json({
-        blog
-    })
-    })
+	return c.json(posts);
+})
