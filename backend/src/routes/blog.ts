@@ -16,17 +16,19 @@ export const blogRouter = new Hono<{
 
 blogRouter.use('/*', async (c, next) => {    
     const authHeader = c.req.header('Authorization') || '';
-    const user = await verify(authHeader,c.env.JWT_SECRET);
+    try{const user = await verify(authHeader,c.env.JWT_SECRET);
         if(user){
             c.set('userId',user.id as string);            
             await next();
         }else{
             c.status(403);
             return c.json({message:"you are not loggedin "})
+        }}catch(e){
+            c.status(403);
+            return c.json({message:"you are not loggedin "})
         }
     })
-    
-    
+
     
 blogRouter.post('/',async (c) => {
     console.log("point reached");
