@@ -7,19 +7,23 @@ const app = new Hono<{
 	Bindings: {         // in hono u have to pass this thing to specify the type of database url
 		DATABASE_URL: string,
     JWT_SECRET:string,
+	},
+	Variables:{
+		userId:string
 	}
 }>();
 
+
 app.use('/api/v1/blog/*', async (c, next) => {
-  const header = c.req.header('Authorization') || "";
-  const response = await verify(header,c.env.JWT_SECRET);
-  if (response.id){
-    await next();
-  }else{
-    c.status(403);
-    c.json({"error":"unauthorized"})
-  }
-  
+const authHeader = c.req.header('Authorization') || '';
+const user = await verify(authHeader,c.env.JWT_SECRET);
+	if(user){
+		c.set('userId',user.id as string);
+		next();
+	}else{
+		c.status(403);
+		return c.json({message:"you are not loggedin "})
+	}
 })
 
 // in serverless backend , we should avoid global variables bcz 
@@ -56,7 +60,7 @@ app.post('/api/v1/user/signin', async(c)=>{
 }).$extends(withAccelerate()) 
 
 const body = await c.req.json();
-
+try{
  const user = await prisma.user.findUnique({
   where:{
     email:body.email
@@ -70,11 +74,17 @@ const body = await c.req.json();
   }else{
     return c.json({error:"wrong Password"})
   }
-
+}catch(e){
+  console.log(e);
+  return c.text("error")
+}
 })
 
-app.post('/api/v1/blog', (c)=>{
-  return c.text("POST blog")
+app.post('/api/v1/blog', (c) => {
+	return c.json({
+		id:c.get('userId')
+	})
+	// return c.text('signin route')
 })
 app.put('/api/v1/blog', (c)=>{
   return c.text("PUT blog")
