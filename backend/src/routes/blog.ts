@@ -29,7 +29,7 @@ blogRouter.use('/*', async (c, next) => {
         }
     })
 
-    
+
 blogRouter.post('/',async (c) => {
     console.log("point reached");
     
@@ -49,7 +49,6 @@ blogRouter.post('/',async (c) => {
         id:blog.id
         })
     })
-
 
 blogRouter.put('/',async (c)=>{
     const id = c.get('userId')
