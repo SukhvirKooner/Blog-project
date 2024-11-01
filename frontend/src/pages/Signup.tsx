@@ -1,5 +1,26 @@
-
+import { useState } from "react"
+import { SignupInput } from "@sukhvir05/medium-app"
+import { BACKEND_URL } from "../config";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export const Signup =()=>{
+  const navigate = useNavigate();
+  const [postInputs,setpostInputs] = useState<SignupInput>({
+    name:'',
+    email:'',
+    password:'',
+  })
+  async function  sendRequest (){    
+    try{
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
+    const jwt = response.data.jwt;
+    localStorage.setItem('auth-token',jwt);
+    navigate('/blog');
+
+  }catch(e){
+    alert('error while signing')
+  }
+  }
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
       {/* Sign Up Form Section */}
@@ -15,19 +36,25 @@ export const Signup =()=>{
             </p>
           </div>
           
-          <form className="mt-8 space-y-6">
+          <div className="mt-8 space-y-6">
             <div className="space-y-4">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Username
+                  Name
                 </label>
                 <input
-                  id="username"
-                  name="username"
+                  id="Name"
+                  name="Name"
                   type="text"
                   required
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter your username"
+                  placeholder="Enter your Name"
+                  onChange={(e)=>{
+                    setpostInputs({
+                      ...postInputs,
+                      name:e.target.value
+                    })
+                  }}
                 />
               </div>
 
@@ -42,6 +69,12 @@ export const Signup =()=>{
                   required
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="m@example.com"
+                  onChange={(e)=>{
+                    setpostInputs({
+                      ...postInputs,
+                      email:e.target.value
+                    })
+                  }}
                 />
               </div>
 
@@ -55,17 +88,24 @@ export const Signup =()=>{
                   type="password"
                   required
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  onChange={(e)=>{
+                    setpostInputs({
+                      ...postInputs,
+                      password:e.target.value
+                    })
+                  }}
                 />
               </div>
             </div>
 
             <button
+            onClick={sendRequest}
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
             >
               Sign Up
             </button>
-          </form>
+          </div>
         </div>
       </div>
 
@@ -73,7 +113,7 @@ export const Signup =()=>{
       <div className="flex-1 bg-gray-100 lg:flex items-center justify-center hidden">
         <div className="max-w-md p-8">
           <blockquote className="text-2xl font-medium text-gray-900 mb-4">
-            "The customer service I received was exceptional. The support team went above and beyond to address my concerns."
+            "Keep your face always toward the sunshine, and shadows will fall behind you."
           </blockquote>
           <div className="mt-4">
             <p className="text-lg font-semibold text-gray-900">Jules Winnfield</p>

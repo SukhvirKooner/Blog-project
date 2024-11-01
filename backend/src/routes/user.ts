@@ -49,6 +49,8 @@ userRouter.post('/signup', async(c)=>{
   }).$extends(withAccelerate()) 
   
   const body = await c.req.json();
+  console.log(body);
+  
   const successfull = signinInput.safeParse(body);
   if(!successfull.success){
     c.status(403)
@@ -66,6 +68,7 @@ userRouter.post('/signup', async(c)=>{
     return c.json({error:"wrong email"})
     }else if(user.password===body.password){
       const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+      console.log('sign in success');
         return c.json({ jwt,message:"signin successfull" });
     }else{
       return c.json({error:"wrong Password"})
