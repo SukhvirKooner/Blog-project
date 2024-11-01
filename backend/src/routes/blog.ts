@@ -28,7 +28,7 @@ blogRouter.use('/*', async (c, next) => {
             c.status(403);
             return c.json({message:"you are not loggedin "})
         }
-    })
+})
 
 
 blogRouter.post('/',async (c) => {
