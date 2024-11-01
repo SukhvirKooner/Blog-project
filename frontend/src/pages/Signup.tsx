@@ -15,14 +15,14 @@ export const Signup =()=>{
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
     const jwt = response.data.jwt;
     localStorage.setItem('auth-token',jwt);
-    navigate('/blog');
+    navigate('/blogs');
 
   }catch(e){
     alert('error while signing')
   }
   }
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row">
+        <div className="min-h-screen bg-[#f8f5f0] flex flex-col lg:flex-row">
       {/* Sign Up Form Section */}
       <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-md w-full space-y-8">
@@ -110,7 +110,7 @@ export const Signup =()=>{
       </div>
 
       {/* Testimonial Section */}
-      <div className="flex-1 bg-gray-100 lg:flex items-center justify-center hidden">
+      <div className="flex-1 bg-[#feedce] lg:flex items-center justify-center hidden">
         <div className="max-w-md p-8">
           <blockquote className="text-2xl font-medium text-gray-900 mb-4">
             "Keep your face always toward the sunshine, and shadows will fall behind you."
