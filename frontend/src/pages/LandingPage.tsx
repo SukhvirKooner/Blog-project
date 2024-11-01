@@ -8,8 +8,8 @@ const LandingPage = () => {
       {/* Navigation */}
       <Navbar/>
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-16 flex justify-between items-center bg-[#f8f5f0]">
-        <div className="max-w-2xl bg-[#f8f5f0]">
+      <main className="container mx-auto px-6 py-16 flex justify-between items-center bg-[#fdf5e6]">
+        <div className="max-w-2xl bg-[#fdf5e6]">
           <h1 className="text-7xl font-serif mb-6">
             Human
             <br />
@@ -24,7 +24,7 @@ const LandingPage = () => {
         </div>
 
         {/* Enhanced Experimental Pattern Section */}
-        <div className="relative bg-[#f8f5f0]">
+        <div className="relative bg-[#fdf5e6]">
           <div className="w-96 h-96 relative">
             {/* Top Abstract Flower */}
             <div className="absolute top-0 right-0 w-32 h-32">
