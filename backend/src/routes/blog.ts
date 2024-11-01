@@ -26,14 +26,13 @@ blogRouter.use('/*', async (c, next) => {
             return c.json({message:"you are not loggedin "})
         }}catch(e){
             c.status(403);
-            return c.json({message:"you are not loggedin "})
+            return c.json({message:"you are not loggedin error "})
         }
 })
 
 
 blogRouter.post('/',async (c) => {
     console.log("point reached");
-    
     const id = c.get('userId')
     const prisma = new PrismaClient({     
         datasourceUrl: c.env.DATABASE_URL, 
@@ -115,7 +114,17 @@ blogRouter.get('/', async (c) => {
         datasourceUrl: c.env.DATABASE_URL, 
     }).$extends(withAccelerate())
 	
-	const posts = await prisma.post.findMany();
+	const posts = await prisma.post.findMany({
+        select:{
+            title:true,
+            content:true,
+            author:{
+                select:{
+                    name:true
+                }
+            }
+        }
+    });
 
 	return c.json(posts);
 })

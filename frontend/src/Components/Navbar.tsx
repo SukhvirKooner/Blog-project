@@ -10,7 +10,7 @@ export const Navbar =()=>{
         <div className="flex items-center gap-6">
             {localStorage.getItem('auth-token') && localStorage.getItem('auth-token') !== 'undefined'?
             <>
-            <button onClick={()=>{navigate('/blogs')}} className="px-4 py-2 text-white bg-black rounded-full hover:bg-gray-800">
+            <button onClick={()=>{navigate('/addblogs')}} className="px-4 py-2 text-white bg-black rounded-full hover:bg-gray-800">
               Start Writing
             </button></>
              :
